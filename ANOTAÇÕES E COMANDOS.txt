@@ -1,0 +1,6 @@
+Instalação do Validator:
+npm install validator@10.11.0
+
+Instalação do Router:
+npm install react-router-dom@5.0.0
+
