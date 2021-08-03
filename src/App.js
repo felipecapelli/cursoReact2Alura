@@ -22,31 +22,44 @@ class App extends Component {
 
     const { autores } = this.state;
 
-    this.setState({
-      autores: autores.filter((autor) => {
-        return autor.id !== id;
-      }),
+    const autoresAtualizado = autores.filter(autor => {
+      return autor.id !== id;
     });
-    ApiService.RemoveAutor(id);
-    PopUp.exibeMensagem("error", "Autor removido com sucesso");
+
+    ApiService.RemoveAutor(id)
+                .then(res => ApiService.TrataErros(res))
+                .then(res =>{
+                  if (res.message === 'deleted') {
+                    this.setState({autores: [...autoresAtualizado]});
+                    PopUp.exibeMensagem("error", "Autor removido com sucesso");  
+                  }
+                })
+                .catch(err => PopUp.exibeMensagem("error", "Erro na comunicação com a API ao tentar remover o Autor"));
 
   }
 
   escutadorDeSubmit = autor => {
     ApiService.CriaAutor(JSON.stringify(autor))
-                  .then(res => res.data)
-                  .then(autor => {
-                    this.setState({ autores: [...this.state.autores, autor] });
-                    PopUp.exibeMensagem("success", "Autor adicionado com sucesso");
+                  .then(res => ApiService.TrataErros(res))
+                  .then(res => {
+                    if (res.message === 'success') {
+                      this.setState({ autores: [...this.state.autores, res.data] });
+                      PopUp.exibeMensagem("success", "Autor adicionado com sucesso"); 
+                    }
                   })
+                  .catch(err => PopUp.exibeMensagem("error", "Erro na comunicação com a API ao tentar Criar o Autor"))
   }
 
   //esse metodo eh executado logo depois do render (como ele vai mexer no state, nesse caso, vai renderizar novamente)(ciclo de vida REACT)
   componentDidMount(){
     ApiService.ListaAutores()
+                  .then(res => ApiService.TrataErros(res))
                   .then(res => {
-                      this.setState({autores: [...this.state.autores, ...res.data]})
+                      if (res.message === 'success') {
+                        this.setState({autores: [...this.state.autores, ...res.data]})
+                      }
                   })
+                  .catch(err => PopUp.exibeMensagem("error", "Erro na comunicação com a API ao tentar Listar os Autores"))
   }
 
   render() {
