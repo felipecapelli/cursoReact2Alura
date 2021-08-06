@@ -1,5 +1,5 @@
 import React from 'react';
-import LinkWrapper from './LinkWrapper';
+import LinkWrapper from '../../Utils/LinkWrapper';
 
 const Header = () =>{//usando nosso componente LinkWrapper (que usa NavLink ao invés de Link)
     return (

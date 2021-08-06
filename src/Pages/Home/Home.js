@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import 'materialize-css/dist/css/materialize.min.css';
-import './App.css';
-import Tabela from './Tabela';
-import Formulario from './Formulario';
-import Header from './Header';
-import PopUp from './PopUp';
-import ApiService from './ApiService';
+import './Home.css';
+import Tabela from '../../Components/Tabela/Tabela';
+import Formulario from '../../Components/Formulario/Formulario';
+import Header from '../../Components/Header/Header';
+import PopUp from '../../Utils/PopUp';
+import ApiService from '../../Utils/ApiService';
 
 
 class App extends Component {
@@ -27,7 +27,6 @@ class App extends Component {
     });
 
     ApiService.RemoveAutor(id)
-                .then(res => ApiService.TrataErros(res))
                 .then(res =>{
                   if (res.message === 'deleted') {
                     this.setState({autores: [...autoresAtualizado]});
@@ -40,7 +39,6 @@ class App extends Component {
 
   escutadorDeSubmit = autor => {
     ApiService.CriaAutor(JSON.stringify(autor))
-                  .then(res => ApiService.TrataErros(res))
                   .then(res => {
                     if (res.message === 'success') {
                       this.setState({ autores: [...this.state.autores, res.data] });
@@ -53,7 +51,6 @@ class App extends Component {
   //esse metodo eh executado logo depois do render (como ele vai mexer no state, nesse caso, vai renderizar novamente)(ciclo de vida REACT)
   componentDidMount(){
     ApiService.ListaAutores()
-                  .then(res => ApiService.TrataErros(res))
                   .then(res => {
                       if (res.message === 'success') {
                         this.setState({autores: [...this.state.autores, ...res.data]})
